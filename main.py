@@ -146,13 +146,13 @@ def updateSlides(folder, buffer):
     files = listFiles(folder, service)
     # download files
     for i in files:
-        if i["mimeType"] == "video/mp4":
-            with open(f"{buffer}/{i['name']}", "wb") as file:
-                file.write(downloadFile(i["id"], service, False))
-        else:
+        if i["mimeType"].startswith("application/vnd.google-apps"):
             data = getIMG(i["id"], service)
             for j in range(len(data)):
                 data[j].save(f"{buffer}/{i['name']}-{j}.png")
+        else:
+            with open(f"{buffer}/{i['name']}", "wb") as file:
+                file.write(downloadFile(i["id"], service, False))
 
 # display the buffer as a slideshow
 def display(delay, buffer):
