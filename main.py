@@ -99,7 +99,7 @@ def listFiles(folder, service, mimetype = None):
         results = service.files().list(q=f"'{folder}' in parents and mimeType = '{mimetype}'", pageSize=10,
                                        fields="nextPageToken, files(id, name)").execute()
     else:
-        results = service.files().list(q = f"'{folder}' in parents", pageSize=10,
+        results = service.files().list(q = f"'{folder}' in parents and mimeType != 'application/vnd.google-apps.folder'", pageSize=10,
                                        fields="nextPageToken, files(id, name, mimeType)").execute()
     return results.get('files', [])
 
