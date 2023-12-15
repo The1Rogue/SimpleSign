@@ -1,15 +1,51 @@
 import os
 import io
-
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.http import MediaIoBaseDownload
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-
-import pdf2image
 import argparse
+import subprocess
+import sys
+
+#this isnt pretty, but it works
+try:
+    try:
+        from googleapiclient.http import MediaIoBaseDownload
+        from googleapiclient.discovery import build
+        from googleapiclient.errors import HttpError
+
+    except ModuleNotFoundError as e:
+        a = input("google-api-python-client is not installed, want me to install it? (y/N)").lower()
+        if a == "y":
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'google-api-python-client'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    try:
+        from google.auth.transport.requests import Request
+        from google.oauth2.credentials import Credentials
+        from google_auth_oauthlib.flow import InstalledAppFlow
+    except ModuleNotFoundError as e:
+        a = input("google-auth-oauthlib is not installed, want me to install it? (y/N)").lower()
+        if a == "y":
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'google-auth-oauthlib'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    try:
+        import pdf2image
+    except ModuleNotFoundError as e:
+        a = input("pdf2image is not installed, want me to install it? (y/N)").lower()
+        if a == "y":
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pdf2image'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+except subprocess.CalledProcessError as e:
+    print("failed to install packages")
+    if sys.prefix == sys.base_prefix:
+        if os.path.exists('./venv'):
+            print(f"youre not running in the virtual environment, try {os.path.abspath('./venv/bin/python')} main.py instead")
+        a = input("do you wish to create a virtual environment and run in there? (y/N)")
+        if a == "y":
+            subprocess.check_call([sys.executable, '-m', 'venv', './venv'], stdout=subprocess.DEVNULL)
+            print(f"venv created, you can now run the script as follows: {os.path.abspath('./venv/bin/python')} main.py")
+        exit()
+
+    exit()
+
+
 
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly'] # scope needed, do not change
 
@@ -96,6 +132,9 @@ def getIMG(file_id, service):
 
 # renew the buffer folder with files from remote
 def updateSlides(folder, buffer):
+    if not os.path.exists(buffer):
+        os.mkdir(buffer)
+
     for i in os.listdir(buffer):
         os.remove(f"{buffer}/{i}")
 

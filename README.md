@@ -4,7 +4,7 @@ SimpleSign is a low maintenance, easy to set up and use system for digital signa
 ### Setup
 
 ##### Credentials
-since this is an open source repo and i don't want to have to care to much about credentials and security, you will have to get your own api key,
+since this is an open source repo and i don't want to have to care to much about credentials and security, you will have to get your own **oauth** api key,
 which can be done here: https://console.cloud.google.com/apis/
 
 place the credentials in the same folder as `main.py`, and name the file `creds.json`
@@ -21,8 +21,10 @@ to authenticate to google, a web-browser is required on the target system. this 
 
 `vlc` is required for displaying the result.
 
-for all systems the following python packages are needed:
+for all systems the following python packages are needed (the script can install them for you if you are lazy):
 `pdf2image, google-api-python-client, google-auth-oauthlib`
+
+
 
 ### Settings
 `-d / --delay` sets the time every slide is shown for, in seconds, defaults to 10s.
