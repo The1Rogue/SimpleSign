@@ -105,9 +105,9 @@ def listFiles(folder, service, mimetype = None):
 
 
 # get a file id that can be exported
-def downloadFile(file_id, name, service, asPdf = True):
+def downloadFile(file_id, name, service, export = True):
     try:
-        if asPdf:
+        if export:
             request = service.files().export_media(fileId=file_id, mimeType="application/pdf")
         else:
             request = service.files().get_media(fileId=file_id)
@@ -127,8 +127,8 @@ def downloadFile(file_id, name, service, asPdf = True):
         exit()
 
 # get a file id as a list of images
-def getIMG(file_id, name, service):
-    pdfData = downloadFile(file_id, name, service)
+def getIMG(file_id, name, service, export = True):
+    pdfData = downloadFile(file_id, name, service, export)
     return pdf2image.convert_from_bytes(pdfData)
 
 # renew the buffer folder with files from remote
@@ -147,8 +147,8 @@ def updateSlides(folder, buffer):
     files = listFiles(folder, service)
     # download files
     for i in files:
-        if i["mimeType"].startswith("application/vnd.google-apps"):
-            data = getIMG(i["id"], i["name"], service)
+        if i["mimeType"].startswith("application/vnd.google-apps") or i["mimeType"] == "application/pdf":
+            data = getIMG(i["id"], i["name"], service, export = i["mimeType"] != "application/pdf")
             for j in range(len(data)):
                 data[j].save(f"{buffer}/{i['name']}-{j}.png")
         else:
